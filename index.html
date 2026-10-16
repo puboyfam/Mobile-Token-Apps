@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Token Listrik 5500 W</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1f7a73"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#e9ece4;--cd:#f7f8f3;--tx:#1b2a29;--mu:#5d6b68;--bd:#cfd5c9;--am:#d9930d;--rd:#c4402f;--tl:#1f7a73;--lcd:#c9d8a8;--lcdt:#1d2a12}
+@media(prefers-color-scheme:dark){:root{--bg:#121a19;--cd:#1a2423;--tx:#e6ece8;--mu:#93a39e;--bd:#2c3a38;--am:#f0b13a;--rd:#ee6a58;--tl:#4cc0b6;--lcd:#2b3a1c;--lcdt:#c9e59a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif;padding:max(16px,env(safe-area-inset-top)) 16px 40px}
+main{max-width:1060px;margin:auto}h1{font-size:22px;margin:0}h2{font-size:16px;margin:0 0 12px}
+header{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:16px}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:10px;padding:16px}
+.grid{display:grid;gap:14px;margin-bottom:14px}.g2{grid-template-columns:1fr 1.4fr}.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+@media(max-width:760px){.g2{grid-template-columns:1fr}}
+label{display:block;font-size:13px;color:var(--mu);margin:10px 0 3px}
+input{width:100%;padding:9px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:inherit}
+input:focus,button:focus-visible{outline:2px solid var(--tl);outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{padding:10px 14px;border:0;border-radius:6px;background:var(--tl);color:#fff;font:600 14px inherit;cursor:pointer}
+button.s{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+fieldset{border:1px dashed var(--bd);border-radius:8px;margin:14px 0 0;padding:2px 12px 12px}legend{font-size:13px;color:var(--mu);padding:0 6px}
+.lcd{background:var(--lcd);color:var(--lcdt);border-radius:8px;padding:12px 16px;font:500 38px/1.1 "IBM Plex Mono",monospace;letter-spacing:1px}
+.lcd small{font:400 13px "IBM Plex Sans",sans-serif;display:block;letter-spacing:0;margin-top:4px;opacity:.85}
+.k{font-size:13px;color:var(--mu)}.v{font:600 22px/1.3 "IBM Plex Sans"}.v small{font-size:13px;font-weight:400;color:var(--mu)}
+.bar{height:8px;background:var(--bd);border-radius:4px;overflow:hidden;margin:8px 0 4px}.bar i{display:block;height:100%;background:var(--am)}
+.ok{color:var(--tl)}.bad{color:var(--rd)}
+.ch{position:relative;height:260px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mu);font-weight:400}th:first-child,td:first-child{text-align:left}
+tr.over td{background:color-mix(in srgb,var(--rd) 12%,transparent)}
+#st{font-size:13px;color:var(--mu)}
+</style></head><body><main>
+<header><div><h1>Token Listrik · 5500 W</h1><div class="k">Tarif <b id="tf"></b> per kWh</div></div>
+<div style="display:flex;gap:8px;align-items:center"><span id="st"></span><input type="month" id="bln" style="width:auto" aria-label="Bulan"><button class="s" id="cfgb">Sync</button></div></header>
+
+<div class="card" id="cfgp" hidden style="margin-bottom:14px"><h2>Sambungan Google Spreadsheet</h2>
+<div class="row"><div><label>URL Web App (Apps Script)</label><input id="url" placeholder="https://script.google.com/macros/s/…/exec"></div>
+<div><label>Kunci (sama dengan KUNCI di Code.gs)</label><input id="key"></div></div>
+<p style="margin:12px 0 0"><button id="cfgs">Simpan sambungan</button></p></div>
+
+<div class="grid g2">
+<form class="card" id="f"><h2>Catat hari ini</h2>
+<div class="row"><div><label for="tgl">Tanggal</label><input type="date" id="tgl" required></div><div><label for="jam">Jam</label><input type="time" id="jam" required></div></div>
+<label for="in">Sisa kWh di meter</label><input type="number" id="in" step="0.01" min="0" required inputmode="decimal">
+<fieldset><legend>Isi token (kosongkan jika tidak beli)</legend>
+<div class="row"><div><label for="tk">kWh token</label><input type="number" id="tk" step="0.01" min="0" inputmode="decimal"></div><div><label for="tr">Rupiah</label><input type="number" id="tr" step="1" min="0" inputmode="numeric"></div></div>
+<label for="tn">Nomor token</label><input id="tn" inputmode="numeric"></fieldset>
+<p style="margin:14px 0 0"><button>Simpan &amp; sync</button></p></form>
+
+<div class="card"><h2>Laporan <span id="rt"></span></h2>
+<div class="lcd"><span id="bal">–</span><small id="bal2">sisa kWh di meter</small></div>
+<div class="grid g4" style="margin:14px 0 0">
+<div><div class="k">Pemakaian hari itu</div><div class="v" id="u1">–</div><div class="bar"><i id="pb" style="width:0"></i></div><div class="k" id="u2"></div></div>
+<div><div class="k">Biaya hari itu</div><div class="v" id="u3">–</div><div class="k" id="u4"></div></div></div>
+<label for="th" style="margin-top:14px">Threshold harian bulan ini (kWh)</label>
+<div style="display:flex;gap:8px"><input type="number" id="th" step="0.1" min="0"><button class="s" id="ths" type="button">Ubah</button></div></div></div>
+
+<div class="grid g4" id="cards"></div>
+
+<div class="grid g2" style="grid-template-columns:1fr 1fr">
+<div class="card"><h2>Pemakaian harian vs threshold</h2><div class="ch"><canvas id="c1"></canvas></div></div>
+<div class="card"><h2>Sisa kWh di meter</h2><div class="ch"><canvas id="c2"></canvas></div></div></div>
+<div class="card"><h2>Rincian bulan</h2><div class="tw"><table id="tb"></table></div></div>
+</main>
+<script>
+const PRICE=1699.53,$=s=>document.querySelector(s),LS=localStorage;
+const rp=n=>'Rp'+Math.round(n).toLocaleString('id-ID'),kw=n=>(+n).toLocaleString('id-ID',{maximumFractionDigits:2});
+const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+let cfg=JSON.parse(LS.tlcfg||'{"url":"","key":""}'),ym,M,ch={};
+$('#tf').textContent=rp(PRICE).replace('Rp','Rp ')+',53'.slice(0,0)+'';$('#tf').textContent='Rp 1.699,53';
+const pad=n=>String(n).padStart(2,'0'),now=new Date();
+const ymOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1);
+const setSt=(t,b)=>{$('#st').textContent=t;$('#st').className=b?'bad':''};
+const dim=()=>new Date(+ym.slice(0,4),+ym.slice(5),0).getDate();
+const persist=()=>LS['tl'+ym]=JSON.stringify(M);
+
+async function flush(){let q=JSON.parse(LS.tlq||'[]');while(q.length){
+ try{const r=await(await fetch(cfg.url,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({...q[0],k:cfg.key})})).json();
+  if(r.error)throw r.error;q.shift();LS.tlq=JSON.stringify(q)}catch(e){setSt('Belum tersinkron ('+q.length+' antre): '+e,1);return false}}return true}
+async function send(p){if(!cfg.url)return setSt('Tersimpan lokal — sambungkan spreadsheet via tombol Sync');
+ const q=JSON.parse(LS.tlq||'[]');q.push(p);LS.tlq=JSON.stringify(q);setSt('Menyinkronkan…');if(await flush())setSt('Tersinkron ke spreadsheet ✓')}
+
+async function load(){
+ M=JSON.parse(LS['tl'+ym]||'null')||{rows:{},th:null,prevIn:null};
+ if(M.th==null)M.th=+LS.tlth||15;
+ render();
+ if(!cfg.url)return;setSt('Memuat dari spreadsheet…');
+ try{if(!await flush())return;
+  const r=await(await fetch(cfg.url+'?action=get&ym='+ym+'&k='+encodeURIComponent(cfg.key))).json();
+  if(r.error)throw r.error;M.rows={};r.rows.forEach(x=>M.rows[x.day]=x);if(r.th!=null)M.th=r.th;M.prevIn=r.prevIn;
+  persist();render();setSt('Tersinkron ✓')}catch(e){setSt('Gagal memuat: '+e,1)}}
+
+function prev(day){for(let d=day-1;d>=1;d--)if(M.rows[d])return M.rows[d].in;return M.prevIn}
+
+$('#f').onsubmit=async e=>{e.preventDefault();
+ const d=$('#tgl').value,n=d.slice(0,7);if(n!==ym){ym=n;$('#bln').value=ym;await load()}
+ const day=+d.slice(8),inn=parseFloat($('#in').value),tk=parseFloat($('#tk').value)||0,tr=parseFloat($('#tr').value)||0,pv=prev(day);
+ const out=pv==null?0:+(pv+tk-inn).toFixed(2);
+ if(out<0&&!confirm('Hasil pemakaian negatif ('+out+' kWh). Cek lagi: apakah token sudah diisi? Tetap simpan?'))return;
+ const row={day,time:$('#jam').value,in:inn,out,rp:Math.round(out*PRICE),tk,tr,tn:$('#tn').value.trim()};
+ M.rows[day]=row;persist();render();send({action:'save',ym,th:M.th,...row});
+ ['in','tk','tr','tn'].forEach(i=>$('#'+i).value='')};
+
+$('#ths').onclick=()=>{const v=parseFloat($('#th').value);if(!(v>0))return;M.th=v;LS.tlth=v;persist();render();send({action:'threshold',ym,th:v})};
+$('#bln').onchange=e=>{if(e.target.value){ym=e.target.value;load()}};
+$('#cfgb').onclick=()=>$('#cfgp').hidden=!$('#cfgp').hidden;
+$('#cfgs').onclick=()=>{cfg={url:$('#url').value.trim(),key:$('#key').value.trim()};LS.tlcfg=JSON.stringify(cfg);$('#cfgp').hidden=true;load()};
+
+const jam=t=>{const m=String(t||'').match(/(\d{1,2}):(\d{2})/);return m?pad(+m[1])+':'+m[2]:''};
+const hari=d=>new Date(+ym.slice(0,4),+ym.slice(5)-1,d).toLocaleDateString('id-ID',{weekday:'short',day:'numeric',month:'short'});
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+function render(){
+ const N=dim(),R=M.rows,days=Object.keys(R).map(Number).sort((a,b)=>a-b),th=M.th;
+ $('#th').value=th;$('#rt').textContent='· '+BLN[+ym.slice(5)-1]+' '+ym.slice(0,4);
+ const used=days.filter(d=>R[d].out>0),tot=used.reduce((s,d)=>s+R[d].out,0),totRp=used.reduce((s,d)=>s+R[d].rp,0);
+ const avg=used.length?tot/used.length:0,over=used.filter(d=>R[d].out>th).length;
+ const tkw=days.reduce((s,d)=>s+(R[d].tk||0),0),trp=days.reduce((s,d)=>s+(R[d].tr||0),0);
+ const L=days.length?R[days[days.length-1]]:null;
+ $('#bal').textContent=L?kw(L.in):'–';$('#bal2').textContent=L?'sisa kWh di meter · tgl '+L.day+(avg?' · cukup ±'+Math.floor(L.in/avg)+' hari':''):'belum ada data bulan ini';
+ if(L){const p=L.out/th*100;$('#u1').innerHTML=kw(L.out)+' <small>kWh · tgl '+L.day+'</small>';$('#pb').style.width=Math.min(p,100)+'%';$('#pb').style.background=L.out>th?'var(--rd)':'var(--am)';
+  $('#u2').innerHTML=L.out>th?'<b class="bad">Melebihi threshold '+kw(L.out-th)+' kWh</b>':'<span class="ok">Aman, sisa jatah '+kw(th-L.out)+' kWh</span>';
+  $('#u3').textContent=rp(L.rp);const pr=days.filter(d=>d<L.day).pop();$('#u4').textContent=pr&&R[pr].out?(L.out>=R[pr].out?'naik ':'turun ')+kw(Math.abs(L.out-R[pr].out))+' kWh dari tgl '+pr:''}
+ else['u1','u3'].forEach(i=>$('#'+i).textContent='–'),$('#u2').textContent=$('#u4').textContent='',$('#pb').style.width=0;
+ const C=[['Total pemakaian',kw(tot)+' <small>kWh</small>',rp(totRp)],['Rata-rata per hari',kw(avg)+' <small>kWh</small>',rp(avg*PRICE)],
+  ['Estimasi sebulan',kw(avg*N)+' <small>kWh</small>',rp(avg*N*PRICE)],['Hari melewati threshold',over+' <small>dari '+used.length+' hari</small>','batas '+kw(th)+' kWh/hari'],
+  ['Token dibeli',kw(tkw)+' <small>kWh</small>',rp(trp)]];
+ $('#cards').innerHTML=C.map(c=>`<div class="card"><div class="k">${c[0]}</div><div class="v">${c[1]}</div><div class="k">${c[2]}</div></div>`).join('');
+ const lb=[...Array(N)].map((_,i)=>i+1),g=k=>lb.map(d=>R[d]?R[d][k]:null);
+ const op={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:css('--tx'),boxWidth:12}}},scales:{x:{ticks:{color:css('--mu')},grid:{display:false}},y:{beginAtZero:true,ticks:{color:css('--mu')},grid:{color:css('--bd')}}}};
+ Object.values(ch).forEach(c=>c.destroy());
+ ch.a=new Chart($('#c1'),{data:{labels:lb,datasets:[{type:'bar',label:'kWh/hari',data:g('out'),backgroundColor:lb.map(d=>R[d]&&R[d].out>th?css('--rd'):css('--am'))},
+  {type:'line',label:'Threshold',data:lb.map(()=>th),borderColor:css('--tx'),borderDash:[6,4],pointRadius:0,borderWidth:1.5}]},options:op});
+ ch.b=new Chart($('#c2'),{type:'line',data:{labels:lb,datasets:[{label:'Sisa kWh',data:g('in'),borderColor:css('--tl'),backgroundColor:css('--tl')+'33',fill:true,tension:.25,spanGaps:true}]},options:op});
+ $('#tb').innerHTML='<tr><th>Hari</th><th>Jam</th><th>Sisa kWh</th><th>Pakai kWh</th><th>Biaya</th><th>Token kWh</th><th>Token Rp</th></tr>'+
+  days.map(d=>{const r=R[d];return `<tr class="${r.out>th?'over':''}"><td>${hari(d)}</td><td>${jam(r.time)}</td><td>${kw(r.in)}</td><td>${kw(r.out)}</td><td>${rp(r.rp)}</td><td>${r.tk?kw(r.tk):''}</td><td>${r.tr?rp(r.tr):''}</td></tr>`}).join('')+
+  `<tr><td><b>Total</b></td><td></td><td></td><td><b>${kw(tot)}</b></td><td><b>${rp(totRp)}</b></td><td><b>${kw(tkw)}</b></td><td><b>${rp(trp)}</b></td></tr>`}
+
+$('#url').value=cfg.url;$('#key').value=cfg.key;
+$('#tgl').value=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());$('#jam').value=pad(now.getHours())+':'+pad(now.getMinutes());
+ym=ymOf(now);$('#bln').value=ym;load();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script></body></html>
