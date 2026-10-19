@@ -30,16 +30,25 @@ fieldset{border:1px dashed var(--bd);border-radius:8px;margin:14px 0 0;padding:2
 .tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mu);font-weight:400}th:first-child,td:first-child{text-align:left}
 tr.over td{background:color-mix(in srgb,var(--rd) 12%,transparent)}
 #st{font-size:13px;color:var(--mu)}
-</style></head><body><main>
+#lg{display:none;position:fixed;inset:0;z-index:10;background:var(--bg);align-items:center;justify-content:center;padding:20px}
+.out #lg{display:flex}.out main{display:none}.guest .adm,.guest #f{display:none}.guest #top{grid-template-columns:1fr}
+#lg .card{width:100%;max-width:380px;text-align:center}#lg .lcd{font-size:26px;margin-bottom:18px}
+#lg button{width:100%;margin-top:10px}#pw{text-align:center}#er{color:var(--rd);font-size:13px;min-height:20px;margin:8px 0 0}
+</style></head><body class="out">
+<div id="lg"><div class="card"><div class="lcd">TOKEN LISTRIK<small>5500 W · masuk sebagai</small></div>
+<div id="ch"><button id="bg" class="s">Guest (hanya lihat)</button><button id="ba">Admin</button></div>
+<div id="pa" hidden><label for="pw">Password admin</label><input type="password" id="pw" autocomplete="current-password">
+<p id="er"></p><button id="go">Masuk</button><button class="s" id="bk">Kembali</button></div></div></div>
+<main>
 <header><div><h1>Token Listrik · 5500 W</h1><div class="k">Tarif <b id="tf"></b> per kWh</div></div>
-<div style="display:flex;gap:8px;align-items:center"><span id="st"></span><input type="month" id="bln" style="width:auto" aria-label="Bulan"><button class="s" id="cfgb">Sync</button></div></header>
+<div style="display:flex;gap:8px;align-items:center"><span id="st"></span><input type="month" id="bln" style="width:auto" aria-label="Bulan"><button class="s" id="cfgb">Sync</button><button class="s" id="lo">Keluar</button></div></header>
 
 <div class="card" id="cfgp" hidden style="margin-bottom:14px"><h2>Sambungan Google Spreadsheet</h2>
 <div class="row"><div><label>URL Web App (Apps Script)</label><input id="url" placeholder="https://script.google.com/macros/s/…/exec"></div>
 <div><label>Kunci (sama dengan KUNCI di Code.gs)</label><input id="key"></div></div>
 <p style="margin:12px 0 0"><button id="cfgs">Simpan sambungan</button></p></div>
 
-<div class="grid g2">
+<div class="grid g2" id="top">
 <form class="card" id="f"><h2>Catat hari ini</h2>
 <div class="row"><div><label for="tgl">Tanggal</label><input type="date" id="tgl" required></div><div><label for="jam">Jam</label><input type="time" id="jam" required></div></div>
 <label for="in">Sisa kWh di meter</label><input type="number" id="in" step="0.01" min="0" required inputmode="decimal">
@@ -53,8 +62,8 @@ tr.over td{background:color-mix(in srgb,var(--rd) 12%,transparent)}
 <div class="grid g4" style="margin:14px 0 0">
 <div><div class="k">Pemakaian hari itu</div><div class="v" id="u1">–</div><div class="bar"><i id="pb" style="width:0"></i></div><div class="k" id="u2"></div></div>
 <div><div class="k">Biaya hari itu</div><div class="v" id="u3">–</div><div class="k" id="u4"></div></div></div>
-<label for="th" style="margin-top:14px">Threshold harian bulan ini (kWh)</label>
-<div style="display:flex;gap:8px"><input type="number" id="th" step="0.1" min="0"><button class="s" id="ths" type="button">Ubah</button></div></div></div>
+<div class="adm"><label for="th" style="margin-top:14px">Threshold harian bulan ini (kWh)</label>
+<div style="display:flex;gap:8px"><input type="number" id="th" step="0.1" min="0"><button class="s" id="ths" type="button">Ubah</button></div></div></div></div>
 
 <div class="grid g4" id="cards"></div>
 
@@ -67,7 +76,7 @@ tr.over td{background:color-mix(in srgb,var(--rd) 12%,transparent)}
 const PRICE=1699.53,$=s=>document.querySelector(s),LS=localStorage;
 const rp=n=>'Rp'+Math.round(n).toLocaleString('id-ID'),kw=n=>(+n).toLocaleString('id-ID',{maximumFractionDigits:2});
 const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-let cfg=JSON.parse(LS.tlcfg||'{"url":"","key":""}'),ym,M,ch={};
+let role='',cfg=JSON.parse(LS.tlcfg||'{"url":"","key":""}'),ym,M,ch={};
 $('#tf').textContent=rp(PRICE).replace('Rp','Rp ')+',53'.slice(0,0)+'';$('#tf').textContent='Rp 1.699,53';
 const pad=n=>String(n).padStart(2,'0'),now=new Date();
 const ymOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1);
@@ -93,7 +102,7 @@ async function load(){
 
 function prev(day){for(let d=day-1;d>=1;d--)if(M.rows[d])return M.rows[d].in;return M.prevIn}
 
-$('#f').onsubmit=async e=>{e.preventDefault();
+$('#f').onsubmit=async e=>{e.preventDefault();if(role!=='admin')return;
  const d=$('#tgl').value,n=d.slice(0,7);if(n!==ym){ym=n;$('#bln').value=ym;await load()}
  const day=+d.slice(8),inn=parseFloat($('#in').value),tk=parseFloat($('#tk').value)||0,tr=parseFloat($('#tr').value)||0,pv=prev(day);
  const out=pv==null?0:+(pv+tk-inn).toFixed(2);
@@ -102,7 +111,7 @@ $('#f').onsubmit=async e=>{e.preventDefault();
  M.rows[day]=row;persist();render();send({action:'save',ym,th:M.th,...row});
  ['in','tk','tr','tn'].forEach(i=>$('#'+i).value='')};
 
-$('#ths').onclick=()=>{const v=parseFloat($('#th').value);if(!(v>0))return;M.th=v;LS.tlth=v;persist();render();send({action:'threshold',ym,th:v})};
+$('#ths').onclick=()=>{if(role!=='admin')return;const v=parseFloat($('#th').value);if(!(v>0))return;M.th=v;LS.tlth=v;persist();render();send({action:'threshold',ym,th:v})};
 $('#bln').onchange=e=>{if(e.target.value){ym=e.target.value;load()}};
 $('#cfgb').onclick=()=>$('#cfgp').hidden=!$('#cfgp').hidden;
 $('#cfgs').onclick=()=>{cfg={url:$('#url').value.trim(),key:$('#key').value.trim()};LS.tlcfg=JSON.stringify(cfg);$('#cfgp').hidden=true;load()};
@@ -138,6 +147,16 @@ function render(){
 
 $('#url').value=cfg.url;$('#key').value=cfg.key;
 $('#tgl').value=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());$('#jam').value=pad(now.getHours())+':'+pad(now.getMinutes());
-ym=ymOf(now);$('#bln').value=ym;load();
+ym=ymOf(now);$('#bln').value=ym;
+const HASH='95fb42c02c65d3b475b56c005d68126464d23ecab2f81ff0c5e23069983381b4';
+const sha=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode('tl:'+t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+function enter(r){role=r;sessionStorage.tlrole=r;document.body.className=r;load()}
+$('#bg').onclick=()=>enter('guest');
+$('#ba').onclick=()=>{$('#ch').hidden=true;$('#pa').hidden=false;$('#pw').focus()};
+$('#bk').onclick=()=>{$('#pa').hidden=true;$('#ch').hidden=false;$('#er').textContent='';$('#pw').value=''};
+async function masuk(){try{if(await sha($('#pw').value)===HASH){$('#pw').value='';$('#er').textContent='';$('#bk').onclick();enter('admin')}else $('#er').textContent='Password salah'}catch(e){$('#er').textContent='Login admin butuh HTTPS (buka lewat link GitHub Pages)'}}
+$('#go').onclick=masuk;$('#pw').onkeydown=e=>{if(e.key==='Enter')masuk()};
+$('#lo').onclick=()=>{sessionStorage.removeItem('tlrole');role='';document.body.className='out'};
+if(sessionStorage.tlrole)enter(sessionStorage.tlrole);
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script></body></html>
