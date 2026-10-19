@@ -41,9 +41,9 @@ tr.over td{background:color-mix(in srgb,var(--rd) 12%,transparent)}
 <p id="er"></p><button id="go">Masuk</button><button class="s" id="bk">Kembali</button></div></div></div>
 <main>
 <header><div><h1>Token Listrik · 5500 W</h1><div class="k">Tarif <b id="tf"></b> per kWh</div></div>
-<div style="display:flex;gap:8px;align-items:center"><span id="st"></span><input type="month" id="bln" style="width:auto" aria-label="Bulan"><button class="s" id="cfgb">Sync</button><button class="s" id="lo">Keluar</button></div></header>
+<div style="display:flex;gap:8px;align-items:center"><span id="st"></span><input type="month" id="bln" style="width:auto" aria-label="Bulan"><button class="s adm" id="cfgb">Sync</button><button class="s" id="lo">Keluar</button></div></header>
 
-<div class="card" id="cfgp" hidden style="margin-bottom:14px"><h2>Sambungan Google Spreadsheet</h2>
+<div class="card adm" id="cfgp" hidden style="margin-bottom:14px"><h2>Sambungan Google Spreadsheet</h2>
 <div class="row"><div><label>URL Web App (Apps Script)</label><input id="url" placeholder="https://script.google.com/macros/s/…/exec"></div>
 <div><label>Kunci (sama dengan KUNCI di Code.gs)</label><input id="key"></div></div>
 <p style="margin:12px 0 0"><button id="cfgs">Simpan sambungan</button></p></div>
@@ -77,6 +77,8 @@ const PRICE=1699.53,$=s=>document.querySelector(s),LS=localStorage;
 const rp=n=>'Rp'+Math.round(n).toLocaleString('id-ID'),kw=n=>(+n).toLocaleString('id-ID',{maximumFractionDigits:2});
 const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 let role='',cfg=JSON.parse(LS.tlcfg||'{"url":"","key":""}'),ym,M,ch={};
+const URL_DEFAULT='https://script.google.com/macros/s/AKfycbyqquBTweLeVMVNw3lHHsMRGvpRaMtqAEeRK_pnWOCAyIA8z9SWxs9M9mR6qFBIZ-DQ/exec';// <-- tempel URL Apps Script (/exec) di sini agar Guest bisa melihat data
+if(!cfg.url)cfg.url=URL_DEFAULT;
 $('#tf').textContent=rp(PRICE).replace('Rp','Rp ')+',53'.slice(0,0)+'';$('#tf').textContent='Rp 1.699,53';
 const pad=n=>String(n).padStart(2,'0'),now=new Date();
 const ymOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1);
